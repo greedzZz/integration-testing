@@ -3,7 +3,6 @@ package functions;
 import functions.logarithmic.Ln;
 import functions.logarithmic.Logarithm;
 import functions.trigonometric.*;
-import trigonometric.*;
 
 public class FunctionSystem implements Function {
 
