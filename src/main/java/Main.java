@@ -8,7 +8,6 @@ import java.io.IOException;
 import java.io.Writer;
 
 public class Main {
-
     public static void main(String[] args) {
         try {
             FunctionSystem sys = new FunctionSystem();
@@ -57,6 +56,5 @@ public class Main {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
 }
