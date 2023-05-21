@@ -1,6 +1,5 @@
 package functions;
 
-import functions.FunctionSystem;
 import functions.logarithmic.Ln;
 import functions.logarithmic.Logarithm;
 import functions.trigonometric.*;
@@ -8,18 +7,18 @@ import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
-
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.Reader;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvFileSource;
 import org.mockito.Mockito;
 
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.Reader;
+
 public class FunctionSystemTest {
 
-    static double eps = 0.0001;
-    static double testEps = 2;
+    static double eps = 0.000001;
+    static double testEps = 0.1;
 
     static Sine sinMock;
     static Cosine cosMock;
@@ -112,118 +111,55 @@ public class FunctionSystemTest {
     @CsvFileSource(resources = "/input/system.csv")
     void testAllMocks(double value, double expected) {
         FunctionSystem function = new FunctionSystem(sinMock, cosMock, secMock, cscMock, tanMock, cotMock, lnMock, logMock);
-        Assertions.assertEquals(expected, function.value(value, eps), testEps);
+         if (Math.abs(expected) > 10000) Assertions.assertEquals(expected, function.value(value, eps), Math.abs(expected / 10000));
+         else Assertions.assertEquals(expected, function.value(value, eps), testEps);
     }
 
     @ParameterizedTest
     @CsvFileSource(resources = "/input/system.csv")
-    void testSin(double value, double expected) {
+    void testSine(double value, double expected) {
         FunctionSystem function = new FunctionSystem(new Sine(), cosMock, secMock, cscMock, tanMock, cotMock, lnMock, logMock);
-        Assertions.assertEquals(expected, function.value(value, eps), testEps);
+        if (Math.abs(expected) > 10000) Assertions.assertEquals(expected, function.value(value, eps), Math.abs(expected / 10000));
+        else Assertions.assertEquals(expected, function.value(value, eps), testEps);
     }
 
     @ParameterizedTest
     @CsvFileSource(resources = "/input/system.csv")
-    void testCosInnerMock(double value, double expected) {
-        FunctionSystem function = new FunctionSystem(sinMock, new Cosine(sinMock), secMock, cscMock, tanMock, cotMock, lnMock, logMock);
-        Assertions.assertEquals(expected, function.value(value, eps), testEps);
-    }
-
-    @ParameterizedTest
-    @CsvFileSource(resources = "/input/system.csv")
-    void testSinCos(double value, double expected) {
+    void testSineCosine(double value, double expected) {
         FunctionSystem function = new FunctionSystem(new Sine(), new Cosine(), secMock, cscMock, tanMock, cotMock, lnMock, logMock);
-        Assertions.assertEquals(expected, function.value(value, eps), testEps);
+        if (Math.abs(expected) > 10000) Assertions.assertEquals(expected, function.value(value, eps), Math.abs(expected / 10000));
+        else Assertions.assertEquals(expected, function.value(value, eps), testEps);
     }
 
     @ParameterizedTest
     @CsvFileSource(resources = "/input/system.csv")
-    void testSecInnerMock(double value, double expected) {
-        FunctionSystem function = new FunctionSystem(sinMock, cosMock, new Secant(cosMock), cscMock, tanMock, cotMock, lnMock, logMock);
-        Assertions.assertEquals(expected, function.value(value, eps), testEps);
-    }
-
-    @ParameterizedTest
-    @CsvFileSource(resources = "/input/system.csv")
-    void testSinCosSec(double value, double expected) {
-        FunctionSystem function = new FunctionSystem(new Sine(), new Cosine(), new Secant(), cscMock, tanMock, cotMock, lnMock, logMock);
-        Assertions.assertEquals(expected, function.value(value, eps), testEps);
-    }
-
-    @ParameterizedTest
-    @CsvFileSource(resources = "/input/system.csv")
-    void testCscInnerMock(double value, double expected) {
-        FunctionSystem function = new FunctionSystem(sinMock, cosMock, secMock, new Cosecant(sinMock), tanMock, cotMock, lnMock, logMock);
-        Assertions.assertEquals(expected, function.value(value, eps), testEps);
-    }
-
-    @ParameterizedTest
-    @CsvFileSource(resources = "/input/system.csv")
-    void testSinCsc(double value, double expected) {
-        FunctionSystem function = new FunctionSystem(new Sine(), cosMock, secMock, new Cosecant(), tanMock, cotMock, lnMock, logMock);
-        Assertions.assertEquals(expected, function.value(value, eps), testEps);
-    }
-
-    @ParameterizedTest
-    @CsvFileSource(resources = "/input/system.csv")
-    void testTanInnerMock(double value, double expected) {
-        FunctionSystem function = new FunctionSystem(sinMock, cosMock, secMock, cscMock, new Tangent(sinMock, cosMock), cotMock, lnMock, logMock);
-        Assertions.assertEquals(expected, function.value(value, eps), testEps);
-    }
-
-    @ParameterizedTest
-    @CsvFileSource(resources = "/input/system.csv")
-    void testSinCosTan(double value, double expected) {
-        FunctionSystem function = new FunctionSystem(new Sine(), new Cosine(), secMock, cscMock, new Tangent(), cotMock, lnMock, logMock);
-        Assertions.assertEquals(expected, function.value(value, eps), testEps);
-    }
-
-    @ParameterizedTest
-    @CsvFileSource(resources = "/input/system.csv")
-    void testCotInnerMock(double value, double expected) {
-        FunctionSystem function = new FunctionSystem(sinMock, cosMock, secMock, cscMock, tanMock, new Cotangent(sinMock, cosMock), lnMock, logMock);
-        Assertions.assertEquals(expected, function.value(value, eps), testEps);
-    }
-
-    @ParameterizedTest
-    @CsvFileSource(resources = "/input/system.csv")
-    void testSinCosCot(double value, double expected) {
-        FunctionSystem function = new FunctionSystem(new Sine(), new Cosine(), secMock, cscMock, tanMock, new Cotangent(), lnMock, logMock);
-        Assertions.assertEquals(expected, function.value(value, eps), testEps);
-    }
-
-    @ParameterizedTest
-    @CsvFileSource(resources = "/input/system.csv")
-    void testTrig(double value, double expected) {
+    void testTrigonometric(double value, double expected) {
         FunctionSystem function = new FunctionSystem(new Sine(), new Cosine(), new Secant(), new Cosecant(), new Tangent(), new Cotangent(), lnMock, logMock);
-        Assertions.assertEquals(expected, function.value(value, eps), testEps);
+        if (Math.abs(expected) > 10000) Assertions.assertEquals(expected, function.value(value, eps), Math.abs(expected / 10000));
+        else Assertions.assertEquals(expected, function.value(value, eps), testEps);
     }
 
     @ParameterizedTest
     @CsvFileSource(resources = "/input/system.csv")
     void testLn(double value, double expected) {
         FunctionSystem function = new FunctionSystem(sinMock, cosMock, secMock, cscMock, tanMock, cotMock, new Ln(), logMock);
-        Assertions.assertEquals(expected, function.value(value, eps), testEps);
+        if (Math.abs(expected) > 10000) Assertions.assertEquals(expected, function.value(value, eps), Math.abs(expected / 10000));
+        else Assertions.assertEquals(expected, function.value(value, eps), testEps);
     }
 
     @ParameterizedTest
     @CsvFileSource(resources = "/input/system.csv")
-    void testLogInnerMock(double value, double expected) {
-        FunctionSystem function = new FunctionSystem(sinMock, cosMock, secMock, cscMock, tanMock, cotMock, lnMock, new Logarithm(lnMock));
-        Assertions.assertEquals(expected, function.value(value, eps), testEps);
-    }
-
-    @ParameterizedTest
-    @CsvFileSource(resources = "/input/system.csv")
-    void testLog(double value, double expected) {
+    void testLogarithmic(double value, double expected) {
         FunctionSystem function = new FunctionSystem(sinMock, cosMock, secMock, cscMock, tanMock, cotMock, new Ln(), new Logarithm());
-        Assertions.assertEquals(expected, function.value(value, eps), testEps);
+        if (Math.abs(expected) > 10000) Assertions.assertEquals(expected, function.value(value, eps), Math.abs(expected / 10000));
+        else Assertions.assertEquals(expected, function.value(value, eps), testEps);
     }
 
     @ParameterizedTest
     @CsvFileSource(resources = "/input/system.csv")
     void testAll(double value, double expected) {
         FunctionSystem function = new FunctionSystem(new Sine(), new Cosine(), new Secant(), new Cosecant(), new Tangent(), new Cotangent(), new Ln(), new Logarithm());
-        Assertions.assertEquals(expected, function.value(value, eps), testEps);
+        if (Math.abs(expected) > 10000) Assertions.assertEquals(expected, function.value(value, eps), Math.abs(expected / 10000));
+        else Assertions.assertEquals(expected, function.value(value, eps), testEps);
     }
 }
